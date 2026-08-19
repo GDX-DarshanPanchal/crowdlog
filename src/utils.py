@@ -1,8 +1,8 @@
 """Utility functions for Crowdlog processing."""
 
 import re
-from datetime import datetime, date
-from typing import Optional, List, Set
+from datetime import datetime, timedelta
+from typing import Optional, List
 from src.config import JIRA_TICKET_PATTERN, DATE_FORMAT
 
 
@@ -119,6 +119,13 @@ def calculate_week_number(dt: datetime) -> str:
     Monday-Sunday weeks.
     First partial week containing month start = W1.
     
+    Example for July 2026:
+    - 01-Jul to 05-Jul = W1 (partial week, Mon-Sun)
+    - 06-Jul to 12-Jul = W2
+    - 13-Jul to 19-Jul = W3
+    - 20-Jul to 26-Jul = W4
+    - 27-Jul onward = W5
+    
     Args:
         dt: Datetime object
         
@@ -131,66 +138,21 @@ def calculate_week_number(dt: datetime) -> str:
     if not dt:
         return None
     
-    # Start of month
+    # Get the first day of the month
     first_day = dt.replace(day=1)
     
     # Find the Monday of the week containing the first day
-    # Monday = 0, Sunday = 6
-    days_since_monday = first_day.weekday()
-    week_start = first_day - datetime.timedelta(days=days_since_monday)
+    # weekday(): Monday=0, Sunday=6
+    days_back = first_day.weekday()
+    first_week_start = first_day - timedelta(days=days_back)
     
-    # Calculate which week the target date falls into
-    weeks_passed = (dt - week_start).days // 7
+    # Find the Monday of the week containing the target date
+    target_days_back = dt.weekday()
+    target_week_start = dt - timedelta(days=target_days_back)
     
-    # Weeks within month start at 1
-    if weeks_passed == 0:
-        week_num = 1
-    else:
-        # Adjust if the week containing first day started before month
-        if first_day.weekday() != 0:  # Not Monday
-            week_num = weeks_passed + 1
-        else:
-            week_num = weeks_passed + 1
-    
-    return f'W{week_num}'
-
-
-def calculate_week_number_correct(dt: datetime) -> str:
-    """Calculate week number within month (W1-W5).
-    
-    Corrected version:
-    Monday-Sunday weeks.
-    First partial week containing month start = W1.
-    
-    Args:
-        dt: Datetime object
-        
-    Returns:
-        Week number (e.g., 'W1', 'W2', etc.)
-    """
-    if isinstance(dt, str):
-        dt = parse_date(dt)
-    
-    if not dt:
-        return None
-    
-    # Get the day of month
-    day = dt.day
-    
-    # Get the day of week (Monday=0, Sunday=6)
-    weekday = dt.weekday()
-    
-    # Find the Monday of the current week
-    monday_of_current_week = dt - datetime.timedelta(days=weekday)
-    
-    # Find the Monday of the first week of month
-    first_day = dt.replace(day=1)
-    first_weekday = first_day.weekday()
-    monday_of_first_week = first_day - datetime.timedelta(days=first_weekday)
-    
-    # Calculate week number
-    days_from_first_monday = (monday_of_current_week - monday_of_first_week).days
-    week_num = (days_from_first_monday // 7) + 1
+    # Calculate the number of weeks from first_week_start to target_week_start
+    weeks_diff = (target_week_start - first_week_start).days // 7
+    week_num = weeks_diff + 1
     
     return f'W{week_num}'
 
@@ -248,7 +210,7 @@ def extract_memo_items(memo: str) -> List[str]:
     text = str(memo)
     
     # Split by common bullet patterns
-    items = re.split(r'[\n•\-]', text)
+    items = re.split(r'[\n\-•]', text)
     
     # Clean items
     cleaned = []
@@ -327,6 +289,6 @@ def format_action_to_check(work_dates: List[str], memo_items: List[str]) -> str:
     # Following lines: memo items
     for item in memo_items:
         if item:
-            lines.append(f'- {item}')
+            lines.append(f' - {item}')
     
     return '\n'.join(lines)
