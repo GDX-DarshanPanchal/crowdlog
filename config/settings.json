@@ -1,0 +1,12 @@
+{
+  "resource_group": "GDX",
+  "resource_aliases": {"Panchal Darshan": "Darshan"},
+  "task_type_aliases": {"EC Operation Support": "Operations"},
+  "billable_rules": {
+    "Operations": "Billable",
+    "Maintenance": "Billable as Revenue Share",
+    "Additional Development": "Billable as Revenue Share"
+  },
+  "allowed_statuses": ["In Progress", "UAT", "Live"],
+  "default_status": "In Progress"
+}
