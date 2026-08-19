@@ -1,0 +1,7 @@
+Resource,Week no_,Date,Resource,Ticket,Issue,Action to Check,Resolution,Log,Issue Log Date,Start Date,End Date/ Resolved date,Status,Final log,Task type,Billable status
+GDX,W3,13-Jul-26,Darshan,OEB-1318,AW26 Build,"07/13, 07/15, 07/16, 07/17, 07/22, 07/27, 07/30
+ -Internal meetings and product data alignment
+ -Follow ups with the client on missing data
+ - Created imports files, reviewed and the data for prod registration
+ - Imported in both STG environments and PROD
+ - Performed UAT in all environmnets.",OEB-1318,19,18-Jun-26,18-Jun-26,,In Progress,18.5,Operations,Billable
