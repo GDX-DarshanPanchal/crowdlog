@@ -2,30 +2,48 @@
 setlocal
 cd /d "%~dp0"
 
-where python >nul 2>nul
-if errorlevel 1 (
-  echo Python was not found.
-  echo Please install Python from https://www.python.org/downloads/
-  echo During installation, select "Add Python to PATH".
+set "PYTHON_CMD="
+py -3 -c "import sys; assert sys.version_info >= (3, 11)" >nul 2>nul
+if not errorlevel 1 set "PYTHON_CMD=py -3"
+
+if not defined PYTHON_CMD (
+  python -c "import sys; assert sys.version_info >= (3, 11)" >nul 2>nul
+  if not errorlevel 1 set "PYTHON_CMD=python"
+)
+
+if not defined PYTHON_CMD (
+  python3 -c "import sys; assert sys.version_info >= (3, 11)" >nul 2>nul
+  if not errorlevel 1 set "PYTHON_CMD=python3"
+)
+
+if not defined PYTHON_CMD (
+  echo Python 3.11 or newer could not be started.
+  echo.
+  echo This is not an internet problem. Windows may be opening the Microsoft Store
+  echo shortcut instead of the Python installation.
+  echo.
+  echo Please reinstall Python from https://www.python.org/downloads/windows/
+  echo and select "Add python.exe to PATH" on the first installation screen.
+  echo Then restart Windows and double-click this file again.
   pause
   exit /b 1
 )
 
-python -c "import openpyxl" >nul 2>nul
+%PYTHON_CMD% -c "import openpyxl" >nul 2>nul
 if errorlevel 1 (
   echo Installing the required Excel package. Please wait...
-  python -m pip install -r requirements.txt
+  %PYTHON_CMD% -m pip install -r requirements.txt
   if errorlevel 1 (
     echo.
-    echo Installation did not finish. Check your internet connection and try again.
+    echo The required package could not be installed.
+    echo The message above contains the specific reason.
+    echo If this is a company computer, your IT security policy may block Python packages.
     pause
     exit /b 1
   )
 )
 
 if not exist output mkdir output
-set OPEN_BROWSER=0
-start "Crowdlog Monthly Report" pythonw "%~dp0web_app.py"
-timeout /t 3 /nobreak >nul
-start "" "http://127.0.0.1:8765"
+set OPEN_BROWSER=1
+start "Crowdlog Monthly Report - keep this window open" %PYTHON_CMD% "%~dp0web_app.py"
 exit /b 0

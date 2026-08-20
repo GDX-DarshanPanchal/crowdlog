@@ -40,6 +40,27 @@ Wait five seconds and refresh the page. If it still does not open, close all bro
 `127.0.0.1:8765`, double-click `START_CROWDLOG.bat` again, and reopen
 **http://127.0.0.1:8765**.
 
+### If Windows says “Python was not found” or opens the Microsoft Store
+
+This message is not caused by the internet connection. Windows has a built-in Microsoft Store
+shortcut named `python`, and that shortcut can be found even when the real Python installation is
+not available through the Windows PATH.
+
+The updated launcher tries the official Python launcher (`py -3`), `python`, and `python3`, and
+verifies that the command really starts Python 3.11 or newer. If none works:
+
+1. Download Python from **https://www.python.org/downloads/windows/**.
+2. Start the installer.
+3. On its first screen, select **Add python.exe to PATH**.
+4. Complete the installation.
+5. Restart Windows.
+6. Double-click `START_CROWDLOG.bat` again.
+
+If Python is already listed under Windows **Installed apps**, choose **Modify**, then enable the
+Python launcher and the option that adds Python to environment variables. The launcher now reports
+package-installation errors separately instead of incorrectly calling every failure an internet
+problem.
+
 ## What stays on your computer
 
 The local address `127.0.0.1` is accessible only from the computer running the application. Input
