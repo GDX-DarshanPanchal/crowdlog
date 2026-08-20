@@ -7,6 +7,8 @@ in a temporary directory, processed locally, and deleted immediately afterward.
 from __future__ import annotations
 
 import html
+import os
+import secrets
 import shutil
 import tempfile
 import threading
@@ -20,11 +22,13 @@ from urllib.parse import quote, unquote, urlparse
 
 from main import run
 
-HOST = "127.0.0.1"
-PORT = 8765
+HOST = os.environ.get("HOST", "127.0.0.1")
+PORT = int(os.environ.get("PORT", "8765"))
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 PROJECT_DIR = Path(__file__).resolve().parent
 OUTPUT_DIR = PROJECT_DIR / "output"
+DOWNLOADS: dict[str, Path] = {}
+DOWNLOADS_LOCK = threading.Lock()
 
 
 def page(message: str = "", downloads: list[Path] | None = None) -> bytes:
@@ -35,7 +39,10 @@ def page(message: str = "", downloads: list[Path] | None = None) -> bytes:
     if downloads:
         result += "<p>Your report is ready:</p><ul>"
         for path in downloads:
-            result += f'<li><a href="/download/{quote(path.name)}">Download {html.escape(path.name)}</a></li>'
+            token = secrets.token_urlsafe(24)
+            with DOWNLOADS_LOCK:
+                DOWNLOADS[token] = path
+            result += f'<li><a href="/download/{token}/{quote(path.name)}">Download {html.escape(path.name)}</a></li>'
         result += "</ul><p>Open the workbook and check the Review Needed worksheet.</p>"
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Crowdlog Monthly Report</title></head>
@@ -98,13 +105,19 @@ def process_uploads(uploads: dict[str, tuple[str, bytes]]) -> list[Path]:
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:  # noqa: N802 - required by BaseHTTPRequestHandler
         requested = urlparse(self.path).path
+        if requested == "/health":
+            self._send(200, b"ok", "text/plain; charset=utf-8")
+            return
         if requested == "/":
             self._send(200, page(), "text/html; charset=utf-8")
             return
         if requested.startswith("/download/"):
-            filename = Path(unquote(requested.removeprefix("/download/"))).name
-            path = OUTPUT_DIR / filename
-            if path.is_file() and path.suffix.lower() == ".xlsx":
+            parts = requested.removeprefix("/download/").split("/", 1)
+            token = parts[0]
+            filename = Path(unquote(parts[1])).name if len(parts) == 2 else ""
+            with DOWNLOADS_LOCK:
+                path = DOWNLOADS.get(token)
+            if path and path.is_file() and path.name == filename and path.suffix.lower() == ".xlsx":
                 self._send(200, path.read_bytes(),
                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                            f'attachment; filename="{filename}"')
@@ -149,11 +162,13 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> int:
     OUTPUT_DIR.mkdir(exist_ok=True)
-    address = f"http://{HOST}:{PORT}"
+    browser_host = "127.0.0.1" if HOST == "0.0.0.0" else HOST
+    address = f"http://{browser_host}:{PORT}"
     server = ThreadingHTTPServer((HOST, PORT), Handler)
     print(f"Crowdlog is ready at {address}")
     print("Keep this window open while using the page. Close it to stop the application.")
-    threading.Timer(0.5, lambda: webbrowser.open(address)).start()
+    if os.environ.get("OPEN_BROWSER", "1") == "1":
+        threading.Timer(0.5, lambda: webbrowser.open(address)).start()
     try:
         server.serve_forever()
     except KeyboardInterrupt:

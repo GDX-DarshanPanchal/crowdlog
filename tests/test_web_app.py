@@ -1,6 +1,6 @@
 import pytest
 
-from web_app import page, parse_uploads, process_uploads
+from web_app import HOST, PORT, page, parse_uploads, process_uploads
 
 
 def multipart_body() -> tuple[str, bytes]:
@@ -34,3 +34,8 @@ def test_parse_browser_uploads():
 def test_processing_requires_both_uploads():
     with pytest.raises(ValueError, match="select both"):
         process_uploads({})
+
+
+def test_default_local_server_address():
+    assert HOST == "127.0.0.1"
+    assert PORT == 8765
