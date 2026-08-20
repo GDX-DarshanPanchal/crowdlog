@@ -2,12 +2,12 @@
 
 ## HOW TO USE
 
-1. Put your Crowdlog export in the `input` folder.
-2. Put your Client/JIRA file in the `input` folder.
-3. Double-click `run.bat` on Windows, or run `python main.py`.
-4. Open the `output` folder.
-5. Open the generated monthly report.
-6. Check the **Review Needed** sheet for anything requiring attention.
+1. Double-click `run.bat` on Windows. On macOS/Linux, run `./run.sh`.
+2. Press **Select Crowdlog File** and choose your Crowdlog export.
+3. Press **Select Client/JIRA File** and choose your Client/JIRA reference file.
+4. Press **Process**.
+5. When processing finishes, press **Open Output Folder**.
+6. Open the generated monthly report and check the **Review Needed** sheet.
 
 ### One-time installation
 
@@ -17,11 +17,20 @@ Install Python 3.11 or newer, then open a command prompt in this folder and run:
 pip install -r requirements.txt
 ```
 
-The program is completely local. It has no UI, database, cloud, Jira API, AI service, or API key.
+The program is completely local. The simple desktop window has no database, cloud connection,
+Jira API, AI service, or API key.
 
-## Running the report
+## Running the report with the simple window
 
-The simplest command automatically identifies both input files by their columns:
+The window is intentionally simple and runs only on your computer. It does not upload your files
+to the internet. Select the two files, press **Process**, and wait for the success message. You do
+not need to rename or move the files first.
+
+![The window has two file selectors, a Process button, and an Open Output Folder button.](docs/ui-guide.svg)
+
+## Advanced command-line use
+
+If you prefer not to use the window, put both files in `input` and run:
 
 ```bash
 python main.py

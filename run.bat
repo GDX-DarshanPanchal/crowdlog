@@ -1,5 +1,5 @@
 @echo off
 cd /d "%~dp0"
-python main.py
+python ui.py
 echo.
 pause

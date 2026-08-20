@@ -1,10 +1,11 @@
 from datetime import date
 from decimal import Decimal
 
-from openpyxl import load_workbook
-
 from src.models import ClientTicket, ReportRow
 from src.report_generator import HEADERS, write_report
+
+openpyxl = __import__("pytest").importorskip("openpyxl")
+load_workbook = openpyxl.load_workbook
 
 
 def test_output_contract(tmp_path):
