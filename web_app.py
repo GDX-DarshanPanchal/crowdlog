@@ -55,7 +55,6 @@ def page(message: str = "", downloads: list[Path] | None = None) -> bytes:
   <p><label>Client/JIRA file<br><input type="file" name="client" accept=".xlsx,.csv" required></label></p>
   <p><button type="submit">Process</button></p>
 </form>
-<form method="post" action="/shutdown"><p><button type="submit">Stop Application</button></p></form>
 </body></html>""".encode("utf-8")
 
 
@@ -126,11 +125,6 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:  # noqa: N802 - required by BaseHTTPRequestHandler
         requested = urlparse(self.path).path
-        if requested == "/shutdown":
-            content = b"<!doctype html><html><body><p>Crowdlog has stopped. You may close this page.</p></body></html>"
-            self._send(200, content, "text/html; charset=utf-8")
-            threading.Thread(target=self.server.shutdown, daemon=True).start()
-            return
         if requested != "/process":
             self._send(404, page("That page was not found."), "text/html; charset=utf-8")
             return

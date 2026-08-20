@@ -62,6 +62,47 @@ Later, return to **Your codespaces** and select the Codespace name to restart it
 Crowdlog page start automatically again. A stopped Codespace keeps its files until it is deleted;
 a deleted Codespace must be created again from the repository.
 
+## If port 8080 gives HTTP ERROR 401
+
+`401` is displayed by GitHub before the request reaches Crowdlog. It normally means the forwarded
+port is private and the browser is not authenticated for the GitHub account that owns the Codespace.
+It does not mean that Python or `openpyxl` failed.
+
+Follow these steps in order:
+
+1. Close the tab showing error 401.
+2. Return to the Codespace tab and confirm that GitHub is signed into the account that created the
+   Codespace.
+3. Open the **Ports** tab in the lower panel.
+4. Find port **8080**, right-click it, and leave **Port Visibility** set to **Private** for business
+   files.
+5. Use the globe/open-in-browser icon on that exact row instead of reusing an old bookmarked link.
+6. If GitHub asks you to authorize access, approve it. If 401 remains, sign out of GitHub, sign in
+   again with the Codespace owner's account, reopen the Codespace, and use the Ports tab again.
+
+If port 8080 has no **Crowdlog Monthly Report** label, the Codespace was probably created before the
+latest `.devcontainer` configuration was added. In the Codespace:
+
+1. Press `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac).
+2. Type **Rebuild Container**.
+3. Select **Codespaces: Rebuild Container** or **Dev Containers: Rebuild Container**.
+4. Wait for rebuilding and package installation to finish.
+5. Open the **Ports** tab and use the open-in-browser icon for port 8080.
+
+If the port still does not start, open the Codespace **Terminal**, paste the following single line,
+and press Enter:
+
+```bash
+bash .devcontainer/start-web.sh
+```
+
+Wait about five seconds, return to **Ports**, and open port 8080. This is a fallback only; after a
+successful container rebuild the application starts automatically.
+
+Making the port **Public** can remove GitHub's sign-in requirement, but anyone with the address could
+then open the upload page. Do not make it public for confidential Crowdlog or Client/JIRA files unless
+your organization explicitly approves public port access.
+
 ## Important privacy information
 
 Codespaces is a GitHub cloud service. The selected business files are uploaded into that Codespace

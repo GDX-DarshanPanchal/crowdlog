@@ -20,7 +20,7 @@ def test_plain_page_has_two_files_and_process_button():
     assert 'name="crowdlog"' in content
     assert 'name="client"' in content
     assert '<button type="submit">Process</button>' in content
-    assert '<button type="submit">Stop Application</button>' in content
+    assert "Stop Application" not in content
     assert "<style" not in content
     assert "application workspace" in content
 
