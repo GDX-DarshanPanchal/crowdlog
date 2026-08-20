@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Start Crowdlog Website",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/start_website.py",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    }
+  ]
+}
