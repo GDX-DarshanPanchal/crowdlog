@@ -2,77 +2,49 @@
 
 ## HOW TO USE
 
-1. Double-click `run.bat` on Windows. On macOS/Linux, run `./run.sh`.
-2. Press **Select Crowdlog File** and choose your Crowdlog export.
-3. Press **Select Client/JIRA File** and choose your Client/JIRA reference file.
-4. Press **Process**.
-5. When processing finishes, press **Open Output Folder**.
-6. Open the generated monthly report and check the **Review Needed** sheet.
+### First time only
 
-### One-time installation
+1. Install Python 3.11 or newer.
+2. Install the required packages once with `python -m pip install -r requirements.txt`.
 
-Install Python 3.11 or newer, then open a command prompt in this folder and run:
+### Every month on Windows
 
-```bash
-pip install -r requirements.txt
-```
+1. Double-click `run.bat`. You do not need to use Command Prompt.
+2. Your web browser opens automatically at **http://127.0.0.1:8765**.
+3. Press **Choose File** under **Crowdlog file** and select the Crowdlog export.
+4. Press **Choose File** under **Client/JIRA file** and select the reference file.
+5. Press **Process**.
+6. Press the download link when the report is ready.
+7. Open the workbook and check the **Review Needed** worksheet.
 
-The program is completely local. The simple desktop window has no database, cloud connection,
-Jira API, AI service, or API key.
+The page is intentionally plain. It runs only on your computer: `127.0.0.1` is a private local
+address, not an internet website. Files are processed locally and temporary upload copies are
+deleted after processing. There is no cloud connection, database, Jira API, AI service, or API key.
 
-## Running the report with the simple window
+On macOS/Linux, run `./run.sh`; it opens the same local address. To stop the local application,
+press **Stop Application** on the web page. If the browser does not open automatically, open
+**http://127.0.0.1:8765**.
 
-The window is intentionally simple and runs only on your computer. It does not upload your files
-to the internet. Select the two files, press **Process**, and wait for the success message. You do
-not need to rename or move the files first.
+## Output
 
-![The window has two file selectors, a Process button, and an Open Output Folder button.](docs/ui-guide.svg)
+Each reporting month creates a workbook named `YYYY-MM_monthly_report.xlsx`. Existing reports are
+never overwritten; `_2`, `_3`, and so on are added. Reports are also kept in the local `output`
+folder. The workbook contains:
+
+* **Monthly Report** — safely matched and aggregated work.
+* **Review Needed** — records that require a person to check them.
+
+Both `.xlsx` and `.csv` inputs are supported.
 
 ## Advanced command-line use
 
-If you prefer not to use the window, put both files in `input` and run:
-
-```bash
-python main.py
-```
-
-To provide files in another location:
+The original command-line workflow remains available but is not required for normal use:
 
 ```bash
 python main.py --crowdlog path/to/crowdlog.xlsx --client path/to/client.xlsx
 ```
 
-To create only one month when an export contains several months:
-
-```bash
-python main.py --month 2026-07
-```
-
-Both `.xlsx` and `.csv` inputs are supported. Each month produces a new file named
-`YYYY-MM_monthly_report.xlsx`. Existing output is never overwritten; a suffix such as `_2`
-is added instead.
-
-## What the workbook contains
-
-* **Monthly Report** contains safely matched and aggregated Employee + Jira Ticket + Month work.
-* **Review Needed** explains missing tickets, unknown categories, conflicts, invalid values, and
-  other records that need a person to check them. A problem in one row does not stop valid work.
-
-Minutes are summed before conversion to hours. Logged task and billing values are retained;
-suggestions come from the Client/JIRA task. Intentional Non-Billable work never receives a
-billable suggestion.
-
-Business rules, the `GDX` organization value, and employee aliases are in
-`config/settings.json` so they can be maintained without changing Python code.
-
-## Troubleshooting
-
-* Keep exactly one Crowdlog file and one Client/JIRA file in `input` for automatic detection.
-* Close input/output workbooks in Excel before running the program.
-* Read the plain-language console message if file columns cannot be identified.
-* Always inspect **Review Needed** before using a report.
-
-## Tests
+To run automated tests:
 
 ```bash
 python -m pytest

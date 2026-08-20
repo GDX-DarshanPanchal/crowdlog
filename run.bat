@@ -1,5 +1,3 @@
 @echo off
 cd /d "%~dp0"
-python ui.py
-echo.
-pause
+start "" pythonw web_app.py
