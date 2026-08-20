@@ -1,3 +1,2 @@
 @echo off
-cd /d "%~dp0"
-start "" pythonw web_app.py
+call "%~dp0START_CROWDLOG.bat"

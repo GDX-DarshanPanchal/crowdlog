@@ -1,152 +1,58 @@
 # Crowdlog Monthly Reporting
 
-## HOW TO USE — NO INSTALLATION ON YOUR COMPUTER
+## HOW TO USE ON WINDOWS — DOWNLOAD THE ZIP
 
-The easiest option is **GitHub Codespaces**. It runs the application on a temporary GitHub cloud
-computer. It does not use Copilot, so reaching a Copilot limit does not prevent it from running.
+You do not need GitHub Codespaces, a pull request, a branch merge, or Copilot.
 
-### Part 1 — make sure these changes are on GitHub
+### Download
 
-If you are viewing this work in Codex, click **Update branch**. That sends the committed changes to
-the branch shown on GitHub. Then open the repository on GitHub and check that it contains the
-`.devcontainer` folder and `web_app.py`.
+1. On GitHub, select the branch named **`crowdlog-ready-local`**.
+2. Press the green **Code** button.
+3. Press **Download ZIP**.
+4. Open your Downloads folder.
+5. Right-click the downloaded ZIP and select **Extract All**.
+6. Open the extracted folder. Do not run the application from inside the ZIP preview.
 
-If the updated branch is not the repository's main/default branch, GitHub may show **Compare & pull
-request**. Open it, create the pull request, and use **Merge pull request**. If you do not have
-permission to merge, the repository owner must do that step. Codespaces can also be started from
-the updated branch by selecting that branch before following the steps below.
+### Start
 
-### Part 2 — start the application on GitHub
+1. Double-click **`START_CROWDLOG.bat`**.
+2. The first run checks for the Excel package and installs it automatically if it is missing.
+3. Your browser opens at **http://127.0.0.1:8765**.
+4. Under **Crowdlog file**, press **Choose File** and select the Crowdlog export.
+5. Under **Client/JIRA file**, press **Choose File** and select the reference file.
+6. Press **Process**.
+7. Press the download link when the report is ready.
+8. Open the workbook and check the **Review Needed** worksheet.
+9. When finished, return to the Crowdlog page and press **Stop Application**.
 
-1. Open the repository's main page on GitHub.
-2. Make sure the branch selector shows the branch containing these changes.
-3. Press the green **Code** button.
-4. Select the **Codespaces** tab. Do not select the Local tab.
-5. Press **Create codespace on [branch name]**.
-6. Wait while GitHub creates the Codespace. The first start can take several minutes.
-7. GitHub automatically installs the required packages and starts Crowdlog.
-8. A new browser tab should open with **Crowdlog Monthly Report**.
+Keep the extracted folder. Next time, only double-click `START_CROWDLOG.bat` again. You do not need
+to download the ZIP every month unless a newer version is released.
 
-If the report tab does not open automatically:
+### If Windows blocks the batch file
 
-1. In the Codespace, select the **Ports** tab in the lower panel.
-2. Find port **8080**, labelled **Crowdlog Monthly Report**.
-3. Select the globe/open-in-browser icon beside it.
+If Windows displays a protection message, select **More info** and then **Run anyway**, but only if
+you downloaded the ZIP from your trusted Crowdlog repository. Some company computers prevent all
+batch files; in that case, your IT administrator must allow the file.
 
-GitHub will show an address similar to:
+### If the browser says it cannot connect
 
-```text
-https://something-8080.app.github.dev
-```
+Wait five seconds and refresh the page. If it still does not open, close all browser tabs for
+`127.0.0.1:8765`, double-click `START_CROWDLOG.bat` again, and reopen
+**http://127.0.0.1:8765**.
 
-That GitHub address—not `127.0.0.1`—is the address to bookmark while the Codespace is running.
-GitHub creates it automatically. By default the forwarded port is private, so another computer
-must be signed into the GitHub account that has access to the Codespace.
+## What stays on your computer
 
-### Part 3 — create a report
+The local address `127.0.0.1` is accessible only from the computer running the application. Input
+files are processed locally. Temporary copies are deleted after processing, and generated reports
+are also retained in the extracted folder's `output` directory. There is no database, Jira API,
+external AI service, or API key.
 
-1. Under **Crowdlog file**, press **Choose File** and select the Crowdlog export.
-2. Under **Client/JIRA file**, press **Choose File** and select the reference file.
-3. Press **Process**.
-4. Press the download link when processing finishes.
-5. Open the downloaded workbook and check the **Review Needed** worksheet.
+## Other supported options
 
-The computer only needs a browser. Python and Excel-processing packages run inside Codespaces.
+The project still includes optional Codespaces (`.devcontainer`) and Render (`render.yaml`)
+configuration, but neither is needed for the ZIP workflow.
 
-### Part 4 — stop and reopen it
-
-To avoid using Codespaces hours when finished, return to GitHub, open your profile menu, select
-**Your codespaces**, open the `...` menu beside this Codespace, and select **Stop codespace**.
-
-Later, return to **Your codespaces** and select the Codespace name to restart it. Port 8080 and the
-Crowdlog page start automatically again. A stopped Codespace keeps its files until it is deleted;
-a deleted Codespace must be created again from the repository.
-
-## If port 8080 gives HTTP ERROR 401
-
-`401` is displayed by GitHub before the request reaches Crowdlog. It normally means the forwarded
-port is private and the browser is not authenticated for the GitHub account that owns the Codespace.
-It does not mean that Python or `openpyxl` failed.
-
-### When the Ports table has a blank Running Process (as in the supplied screenshot)
-
-A blank **Running Process** cell means Crowdlog is not currently running. Fix that before opening
-the forwarded address:
-
-1. In the left Explorer, find `start_website.py`.
-2. Right-click `start_website.py`.
-3. Select **Run Python File in Terminal**.
-4. Leave the Terminal running.
-5. Wait about five seconds and return to **Ports**.
-6. Port 8080 should now show a running Python process. Use its open-in-browser icon.
-
-Alternatively, select the Run and Debug icon on the left, choose **Start Crowdlog Website**, and
-press the green play button. The application detects Codespaces and uses `0.0.0.0:8080`
-automatically.
-
-Follow these steps in order:
-
-1. Close the tab showing error 401.
-2. Return to the Codespace tab and confirm that GitHub is signed into the account that created the
-   Codespace.
-3. Open the **Ports** tab in the lower panel.
-4. Find port **8080**, right-click it, and leave **Port Visibility** set to **Private** for business
-   files.
-5. Use the globe/open-in-browser icon on that exact row instead of reusing an old bookmarked link.
-6. If GitHub asks you to authorize access, approve it. If 401 remains, sign out of GitHub, sign in
-   again with the Codespace owner's account, reopen the Codespace, and use the Ports tab again.
-
-If port 8080 has no **Crowdlog Monthly Report** label, the Codespace was probably created before the
-latest `.devcontainer` configuration was added. In the Codespace:
-
-The simplest non-technical fix is to delete that old Codespace and create a new Codespace from the
-updated branch. Updating a GitHub branch does not automatically copy new files into an already-open
-Codespace. From GitHub, open **Your codespaces**, use the `...` menu for the old Codespace, select
-**Delete**, return to the repository, select the updated branch, and create a new Codespace.
-
-If you want to keep the existing Codespace instead:
-
-1. Press `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac).
-2. Type **Rebuild Container**.
-3. Select **Codespaces: Rebuild Container** or **Dev Containers: Rebuild Container**.
-4. Wait for rebuilding and package installation to finish.
-5. Open the **Ports** tab and use the open-in-browser icon for port 8080.
-
-If the port still does not start, open the Codespace **Terminal**, paste the following single line,
-and press Enter:
-
-```bash
-bash .devcontainer/start-web.sh
-```
-
-Wait about five seconds, return to **Ports**, and open port 8080. This is a fallback only; after a
-successful container rebuild the application starts automatically.
-
-Making the port **Public** can remove GitHub's sign-in requirement, but anyone with the address could
-then open the upload page. Do not make it public for confidential Crowdlog or Client/JIRA files unless
-your organization explicitly approves public port access.
-
-For a quick diagnosis only, right-click port 8080, select **Port Visibility > Public**, and open it
-again. If that removes 401, the application is working and the remaining issue is GitHub private-port
-authentication. Change it back to **Private** before uploading confidential files. If public access
-is required across several computers, use only organization-approved files or deploy the application
-behind an approved authenticated hosting service.
-
-## Important privacy information
-
-Codespaces is a GitHub cloud service. The selected business files are uploaded into that Codespace
-for processing. Temporary input copies are deleted after processing, while generated reports remain
-in the Codespace's `output` folder until the Codespace or files are deleted. Your organization should
-approve GitHub Codespaces before confidential files are processed.
-
-## Other deployment option
-
-`render.yaml` remains available if the repository owner wants a permanent Render website. Render
-assigns the final public address after the owner connects the repository to a Render account.
-
-## Developer commands
-
-Local command-line use remains available but is not required for the Codespaces workflow:
+For developers, command-line processing remains available:
 
 ```bash
 python main.py --crowdlog path/to/crowdlog.xlsx --client path/to/client.xlsx
