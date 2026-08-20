@@ -1,263 +1,125 @@
-# Crowdlog Monthly Report Automation - Version 1
+# Crowdlog Monthly Reporting
 
-This project automates end-of-month Crowdlog entries with descriptions for OEB.
+## HOW TO USE — NO INSTALLATION ON YOUR COMPUTER
 
-## Version 1 Features
+The easiest option is **GitHub Codespaces**. It runs the application on a temporary GitHub cloud
+computer. It does not use Copilot, so reaching a Copilot limit does not prevent it from running.
 
-- Reads Crowdlog XLSX export
-- Reads Client/JIRA XLSX reference file
-- Extracts JIRA tickets from Crowdlog memos using regex pattern matching
-- Matches Crowdlog entries to Client data by JIRA ticket
-- Groups entries by Month + Employee + Ticket
-- Generates monthly reporting XLSX with 18 columns
-- Validates input files and produces clear error messages
-- Produces "Review Needed" worksheet for records that cannot be automatically matched
-- Supports both plain-text and hyperlinked JIRA tickets in Client file
+### Part 1 — make sure these changes are on GitHub
 
-## Project Structure
+If you are viewing this work in Codex, click **Update branch**. That sends the committed changes to
+the branch shown on GitHub. Then open the repository on GitHub and check that it contains the
+`.devcontainer` folder and `web_app.py`.
 
+If the updated branch is not the repository's main/default branch, GitHub may show **Compare & pull
+request**. Open it, create the pull request, and use **Merge pull request**. If you do not have
+permission to merge, the repository owner must do that step. Codespaces can also be started from
+the updated branch by selecting that branch before following the steps below.
+
+### Part 2 — start the application on GitHub
+
+1. Open the repository's main page on GitHub.
+2. Make sure the branch selector shows the branch containing these changes.
+3. Press the green **Code** button.
+4. Select the **Codespaces** tab. Do not select the Local tab.
+5. Press **Create codespace on [branch name]**.
+6. Wait while GitHub creates the Codespace. The first start can take several minutes.
+7. GitHub automatically installs the required packages and starts Crowdlog.
+8. A new browser tab should open with **Crowdlog Monthly Report**.
+
+If the report tab does not open automatically:
+
+1. In the Codespace, select the **Ports** tab in the lower panel.
+2. Find port **8080**, labelled **Crowdlog Monthly Report**.
+3. Select the globe/open-in-browser icon beside it.
+
+GitHub will show an address similar to:
+
+```text
+https://something-8080.app.github.dev
 ```
-crowdlog/
-├── src/
-│   ├── __init__.py
-│   ├── config.py              # Configuration and constants
-│   ├── input_reader.py        # Read XLSX input files with validation
-│   ├── ticket_extractor.py    # Extract JIRA tickets from memo
-│   ├── matcher.py             # Match Crowdlog to Client data
-│   ├── aggregator.py          # Group and aggregate by Month/Employee/Ticket
-│   ├── categorizer.py         # Normalize task types and billable status
-│   ├── report_generator.py    # Generate output XLSX
-│   ├── exceptions.py          # Custom exceptions
-│   └── utils.py               # Utility functions
-├── tests/
-│   ├── __init__.py
-│   ├── test_ticket_extractor.py
-│   ├── test_matcher.py
-│   ├── test_categorizer.py
-│   ├── test_aggregator.py
-│   └── test_report_generator.py
-├── run.py                      # Main entry point
-├── run.sh                      # Linux/Mac run script
-├── run.bat                     # Windows run script
-├── requirements.txt            # Python dependencies
-└── README.md                   # This file
 
-## Requirements
+That GitHub address—not `127.0.0.1`—is the address to bookmark while the Codespace is running.
+GitHub creates it automatically. By default the forwarded port is private, so another computer
+must be signed into the GitHub account that has access to the Codespace.
 
-- Python 3.8 or higher
-- openpyxl (for reading/writing XLSX files)
-- Optional: pandas (for additional validation)
+### Part 3 — create a report
 
-## Installation
+1. Under **Crowdlog file**, press **Choose File** and select the Crowdlog export.
+2. Under **Client/JIRA file**, press **Choose File** and select the reference file.
+3. Press **Process**.
+4. Press the download link when processing finishes.
+5. Open the downloaded workbook and check the **Review Needed** worksheet.
 
-1. Clone the repository
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+The computer only needs a browser. Python and Excel-processing packages run inside Codespaces.
 
-## Usage
+### Part 4 — stop and reopen it
 
-### Windows
+To avoid using Codespaces hours when finished, return to GitHub, open your profile menu, select
+**Your codespaces**, open the `...` menu beside this Codespace, and select **Stop codespace**.
+
+Later, return to **Your codespaces** and select the Codespace name to restart it. Port 8080 and the
+Crowdlog page start automatically again. A stopped Codespace keeps its files until it is deleted;
+a deleted Codespace must be created again from the repository.
+
+## If port 8080 gives HTTP ERROR 401
+
+`401` is displayed by GitHub before the request reaches Crowdlog. It normally means the forwarded
+port is private and the browser is not authenticated for the GitHub account that owns the Codespace.
+It does not mean that Python or `openpyxl` failed.
+
+Follow these steps in order:
+
+1. Close the tab showing error 401.
+2. Return to the Codespace tab and confirm that GitHub is signed into the account that created the
+   Codespace.
+3. Open the **Ports** tab in the lower panel.
+4. Find port **8080**, right-click it, and leave **Port Visibility** set to **Private** for business
+   files.
+5. Use the globe/open-in-browser icon on that exact row instead of reusing an old bookmarked link.
+6. If GitHub asks you to authorize access, approve it. If 401 remains, sign out of GitHub, sign in
+   again with the Codespace owner's account, reopen the Codespace, and use the Ports tab again.
+
+If port 8080 has no **Crowdlog Monthly Report** label, the Codespace was probably created before the
+latest `.devcontainer` configuration was added. In the Codespace:
+
+1. Press `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (Mac).
+2. Type **Rebuild Container**.
+3. Select **Codespaces: Rebuild Container** or **Dev Containers: Rebuild Container**.
+4. Wait for rebuilding and package installation to finish.
+5. Open the **Ports** tab and use the open-in-browser icon for port 8080.
+
+If the port still does not start, open the Codespace **Terminal**, paste the following single line,
+and press Enter:
+
 ```bash
-run.bat <crowdlog.xlsx> <client.xlsx> <output.xlsx> [--config config.json]
+bash .devcontainer/start-web.sh
 ```
 
-### Linux/Mac
+Wait about five seconds, return to **Ports**, and open port 8080. This is a fallback only; after a
+successful container rebuild the application starts automatically.
+
+Making the port **Public** can remove GitHub's sign-in requirement, but anyone with the address could
+then open the upload page. Do not make it public for confidential Crowdlog or Client/JIRA files unless
+your organization explicitly approves public port access.
+
+## Important privacy information
+
+Codespaces is a GitHub cloud service. The selected business files are uploaded into that Codespace
+for processing. Temporary input copies are deleted after processing, while generated reports remain
+in the Codespace's `output` folder until the Codespace or files are deleted. Your organization should
+approve GitHub Codespaces before confidential files are processed.
+
+## Other deployment option
+
+`render.yaml` remains available if the repository owner wants a permanent Render website. Render
+assigns the final public address after the owner connects the repository to a Render account.
+
+## Developer commands
+
+Local command-line use remains available but is not required for the Codespaces workflow:
+
 ```bash
-./run.sh <crowdlog.xlsx> <client.xlsx> <output.xlsx> [--config config.json]
+python main.py --crowdlog path/to/crowdlog.xlsx --client path/to/client.xlsx
+python -m pytest
 ```
-
-### Python (Direct)
-```bash
-python run.py <crowdlog.xlsx> <client.xlsx> <output.xlsx> [--config config.json]
-```
-
-## Example
-
-```bash
-python run.py crowdlog_sample.xlsx client_sample.xlsx monthly_report_output.xlsx
-```
-
-## Output Format
-
-The application generates an XLSX workbook with these exact 18 columns in order:
-
-1. Resource (organization, default: "GDX")
-2. Week no_ (W1, W2, W3, etc.)
-3. Date (earliest Crowdlog date in group, format: DD-MMM-YY)
-4. Resource (employee name from Crowdlog member_name)
-5. Ticket (JIRA ticket extracted from Crowdlog memo)
-6. Issue (from Client Task Title)
-7. Action to Check (aggregated work dates + bullet-point memo items)
-8. Resolution (JIRA ticket, e.g., OEB-1318)
-9. Log (calculated hours = sum of minutes / 60)
-10. Issue Log Date (from Client Ticket Logged Date)
-11. Start Date (earliest start date from Client, format: DD-MMM-YY)
-12. End Date/ Resolved date (from Client End Date, format: DD-MMM-YY)
-13. Status (In Progress, UAT, or Live; defaults to "In Progress")
-14. Final log (calculated hours = sum of minutes / 60)
-15. Task type (normalized from Client Task value)
-16. Billable status (from Crowdlog Billable status:name)
-17. Suggested Task type (recommended based on Client Task; blank if Non-Billable)
-18. Suggested Billable status (recommended based on Task Type; blank if Non-Billable)
-
-Note: Columns 1 and 4 are both named "Resource" intentionally.
-
-## Processing Logic
-
-### 1. Input Validation
-- Verify Crowdlog file has required columns (timesheet_date, member_name, memo, minutes, etc.)
-- Verify Client file has required columns (Ticket, Task, Task Title, Start Date, End Date)
-- Report clear errors if required fields are missing
-
-### 2. JIRA Ticket Extraction
-- Search Crowdlog memo field for pattern: `OEB-XXXX` (e.g., OEB-1318)
-- Also check: Ticket number:name, task:Ticket number:name (only if they match JIRA pattern)
-- Ignore non-JIRA values like "x" or "3H42OZ"
-- If no valid ticket found → send record to "Review Needed" worksheet
-
-### 3. Crowdlog-Client Matching
-- Extract JIRA ticket from Crowdlog memo
-- Look up ticket in Client file Ticket column
-- If found → Link Client data (Task, Task Title, dates)
-- If not found → Send record to "Review Needed" worksheet
-
-### 4. Task Type Mapping
-- Get Client Task value (e.g., "EC Operation Support")
-- Normalize to standard task type:
-  - "EC Operation Support" → "Operations"
-  - "Operations" → "Operations"
-  - "Maintenance" → "Maintenance"
-  - "Additional Development" → "Additional Development"
-  - Unknown values → Send to "Review Needed" worksheet
-- Do NOT use Crowdlog Process:name as task type
-
-### 5. Billable Status Handling
-- Use Crowdlog "Billable status:name" as primary
-- Fallback to "task:Billable status:name" if primary is empty
-- **IMPORTANT: Non-Billable Exception**
-  - If Crowdlog Billable status is "Non-Billable", respect that decision
-  - Output: Billable status = "Non-Billable"
-  - Leave Suggested Task type and Suggested Billable status BLANK
-  - Do NOT suggest changing to Billable
-
-### 6. Grouping and Aggregation
-- Group records by: Reporting Month + Employee + JIRA Ticket
-- Sum all minutes for the group
-- Calculate hours: sum_minutes / 60
-- Both Log and Final log = calculated hours
-- Select earliest timesheet_date as group Date
-- Combine unique work dates for Action to Check (format: MM/DD, MM/DD, ...)
-- Aggregate memo items as bullet points
-
-### 7. Action to Check Format
-- First line: Unique work dates, sorted chronologically, formatted as MM/DD
-  Example: `07/13, 07/15, 07/16, 07/17, 07/22, 07/27, 07/30`
-- Following lines: Bullet points from Crowdlog memos
-  - Remove redundant JIRA ticket prefixes
-  - Remove exact duplicate descriptions
-  - Do NOT invent activities
-
-### 8. Week Number Calculation
-- Calculate week within reporting month
-- Monday-Sunday weeks
-- First partial week containing month start = W1
-- Example for July 2026:
-  - 01-Jul to 05-Jul = W1
-  - 06-Jul to 12-Jul = W2
-  - 13-Jul to 19-Jul = W3
-  - 20-Jul to 26-Jul = W4
-  - 27-Jul onward = W5
-
-### 9. Status Assignment
-- Version 1: Use "In Progress" as default
-- Do NOT infer from memo keywords (UAT, PROD, etc.)
-- Future versions can expand status rules
-
-### 10. Suggestions
-- Suggested Task type: From Client Task value normalization
-- Suggested Billable status: Based on Task Type
-  - Operations → Billable
-  - Maintenance → Billable as Revenue Share
-  - Additional Development → Billable as Revenue Share
-- **Exception: If Crowdlog is Non-Billable, leave suggestions BLANK**
-
-## Output Worksheets
-
-### Main Report
-- All successfully processed records (18 columns)
-- One row per Month + Employee + Ticket group
-
-### Review Needed
-- Records that could not be automatically processed
-- Reasons: Missing JIRA ticket, Unknown task type, No Client match, etc.
-- Includes: All original Crowdlog fields + reason for review
-
-## Configuration
-
-Optional JSON configuration file:
-
-```json
-{
-  "organization_name": "GDX",
-  "default_status": "In Progress",
-  "task_type_mappings": {
-    "EC Operation Support": "Operations",
-    "Operations": "Operations",
-    "Maintenance": "Maintenance",
-    "Additional Development": "Additional Development"
-  },
-  "billable_mappings": {
-    "Operations": "Billable",
-    "Maintenance": "Billable as Revenue Share",
-    "Additional Development": "Billable as Revenue Share"
-  }
-}
-```
-
-## Testing
-
-Run unit tests:
-```bash
-python -m pytest tests/ -v
-```
-
-## Supported Input Files
-
-- **Crowdlog XLSX**: Export from Crowdlog system
-- **Client XLSX**: JIRA/Client reference file with ticket definitions
-- Both files are read using openpyxl (supports formulas, hyperlinks, etc.)
-
-## Error Handling
-
-The application provides clear, actionable error messages for:
-- Missing input files
-- Invalid XLSX format
-- Missing required columns in Crowdlog file
-- Missing required columns in Client file
-- Empty input files
-- Invalid date formats
-- Non-matching JIRA tickets
-
-## Version History
-
-### Version 1.0 (Current)
-- Initial implementation
-- Crowdlog-to-Client matching by JIRA ticket
-- JIRA ticket extraction from memos using regex
-- Task type normalization (4 known categories)
-- Monthly grouping and aggregation
-- Week number calculation (month-based)
-- Review Needed worksheet for manual processing
-- Non-Billable exception handling
-- Configuration file support
-
-## Future Enhancements (Version 2+)
-
-- Complex status inference rules
-- Additional task type categories
-- Multi-ticket per Crowdlog entry support
-- Partial month processing (weekly reports)
-- Email delivery of reports
-- Database integration for historical tracking
