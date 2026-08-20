@@ -48,7 +48,7 @@ def page(message: str = "", downloads: list[Path] | None = None) -> bytes:
 <html lang="en"><head><meta charset="utf-8"><title>Crowdlog Monthly Report</title></head>
 <body>
 <h1>Crowdlog Monthly Report</h1>
-<p>Select both files and press Process. Your files stay on this computer.</p>
+<p>Select both files and press Process. Your files are handled inside this application workspace.</p>
 {result}
 <form method="post" action="/process" enctype="multipart/form-data">
   <p><label>Crowdlog file<br><input type="file" name="crowdlog" accept=".xlsx,.csv" required></label></p>

@@ -22,6 +22,7 @@ def test_plain_page_has_two_files_and_process_button():
     assert '<button type="submit">Process</button>' in content
     assert '<button type="submit">Stop Application</button>' in content
     assert "<style" not in content
+    assert "application workspace" in content
 
 
 def test_parse_browser_uploads():

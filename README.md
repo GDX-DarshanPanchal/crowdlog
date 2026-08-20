@@ -1,78 +1,84 @@
 # Crowdlog Monthly Reporting
 
-## HOW TO USE
+## HOW TO USE — NO INSTALLATION ON YOUR COMPUTER
 
-### Use from many computers — hosted website
+The easiest option is **GitHub Codespaces**. It runs the application on a temporary GitHub cloud
+computer. It does not use Copilot, so reaching a Copilot limit does not prevent it from running.
 
-This repository now includes `render.yaml`, which defines a deployable web service. After the
-repository owner deploys it to a hosting account, Render provides one public address similar to:
+### Part 1 — make sure these changes are on GitHub
+
+If you are viewing this work in Codex, click **Update branch**. That sends the committed changes to
+the branch shown on GitHub. Then open the repository on GitHub and check that it contains the
+`.devcontainer` folder and `web_app.py`.
+
+If the updated branch is not the repository's main/default branch, GitHub may show **Compare & pull
+request**. Open it, create the pull request, and use **Merge pull request**. If you do not have
+permission to merge, the repository owner must do that step. Codespaces can also be started from
+the updated branch by selecting that branch before following the steps below.
+
+### Part 2 — start the application on GitHub
+
+1. Open the repository's main page on GitHub.
+2. Make sure the branch selector shows the branch containing these changes.
+3. Press the green **Code** button.
+4. Select the **Codespaces** tab. Do not select the Local tab.
+5. Press **Create codespace on [branch name]**.
+6. Wait while GitHub creates the Codespace. The first start can take several minutes.
+7. GitHub automatically installs the required packages and starts Crowdlog.
+8. A new browser tab should open with **Crowdlog Monthly Report**.
+
+If the report tab does not open automatically:
+
+1. In the Codespace, select the **Ports** tab in the lower panel.
+2. Find port **8080**, labelled **Crowdlog Monthly Report**.
+3. Select the globe/open-in-browser icon beside it.
+
+GitHub will show an address similar to:
 
 ```text
-https://crowdlog-monthly-report.onrender.com
+https://something-8080.app.github.dev
 ```
 
-That exact address is assigned by Render during deployment; it cannot be created by source code or
-by a temporary Codex workspace. The repository owner must connect this GitHub repository to Render
-once and choose **New > Blueprint**. Render reads `render.yaml`, installs the requirements, starts
-the website, and shows the final URL. No files need to be installed on the computers that use it.
+That GitHub address—not `127.0.0.1`—is the address to bookmark while the Codespace is running.
+GitHub creates it automatically. By default the forwarded port is private, so another computer
+must be signed into the GitHub account that has access to the Codespace.
 
-At the hosted address:
+### Part 3 — create a report
 
-1. Press **Choose File** under **Crowdlog file**.
-2. Press **Choose File** under **Client/JIRA file**.
+1. Under **Crowdlog file**, press **Choose File** and select the Crowdlog export.
+2. Under **Client/JIRA file**, press **Choose File** and select the reference file.
 3. Press **Process**.
-4. Download the generated report.
-5. Check the **Review Needed** worksheet.
+4. Press the download link when processing finishes.
+5. Open the downloaded workbook and check the **Review Needed** worksheet.
 
-Important: on a hosted service, selected business files are uploaded to that hosting service for
-processing. Temporary input copies are deleted after processing, but your organization should
-approve the selected host before confidential files are used.
+The computer only needs a browser. Python and Excel-processing packages run inside Codespaces.
 
-### Optional use on one computer
+### Part 4 — stop and reopen it
 
-1. Install Python 3.11 or newer.
-2. Install the required packages once with `python -m pip install -r requirements.txt`.
+To avoid using Codespaces hours when finished, return to GitHub, open your profile menu, select
+**Your codespaces**, open the `...` menu beside this Codespace, and select **Stop codespace**.
 
-### Every month on Windows
+Later, return to **Your codespaces** and select the Codespace name to restart it. Port 8080 and the
+Crowdlog page start automatically again. A stopped Codespace keeps its files until it is deleted;
+a deleted Codespace must be created again from the repository.
 
-1. Double-click `run.bat`. You do not need to use Command Prompt.
-2. Your web browser opens automatically at **http://127.0.0.1:8765**.
-3. Press **Choose File** under **Crowdlog file** and select the Crowdlog export.
-4. Press **Choose File** under **Client/JIRA file** and select the reference file.
-5. Press **Process**.
-6. Press the download link when the report is ready.
-7. Open the workbook and check the **Review Needed** worksheet.
+## Important privacy information
 
-The page is intentionally plain. In local mode, `127.0.0.1` is a private address and files stay on
-that computer. In hosted mode, the same application is reached through the hosting provider's URL.
-Temporary upload copies are deleted after processing. There is no database, Jira API, AI service,
-or API key.
+Codespaces is a GitHub cloud service. The selected business files are uploaded into that Codespace
+for processing. Temporary input copies are deleted after processing, while generated reports remain
+in the Codespace's `output` folder until the Codespace or files are deleted. Your organization should
+approve GitHub Codespaces before confidential files are processed.
 
-On macOS/Linux, run `./run.sh`; it opens the same local address. To stop the local application,
-press **Stop Application** on the web page. If the browser does not open automatically, open
-**http://127.0.0.1:8765**.
+## Other deployment option
 
-## Output
+`render.yaml` remains available if the repository owner wants a permanent Render website. Render
+assigns the final public address after the owner connects the repository to a Render account.
 
-Each reporting month creates a workbook named `YYYY-MM_monthly_report.xlsx`. Existing reports are
-never overwritten; `_2`, `_3`, and so on are added. Reports are also kept in the local `output`
-folder. The workbook contains:
+## Developer commands
 
-* **Monthly Report** — safely matched and aggregated work.
-* **Review Needed** — records that require a person to check them.
-
-Both `.xlsx` and `.csv` inputs are supported.
-
-## Advanced command-line use
-
-The original command-line workflow remains available but is not required for normal use:
+Local command-line use remains available but is not required for the Codespaces workflow:
 
 ```bash
 python main.py --crowdlog path/to/crowdlog.xlsx --client path/to/client.xlsx
-```
-
-To run automated tests:
-
-```bash
 python -m pytest
 ```
